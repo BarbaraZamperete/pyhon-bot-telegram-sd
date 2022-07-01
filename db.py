@@ -45,3 +45,12 @@ def salvarLoca(id, latitude, longitude):
     )
     cursor.execute(sql, (id, latitude, longitude))
     db_connection.commit()
+
+def checkUser(id):
+    sql = (
+        "SELECT * FROM user WHERE id = %s" 
+    )
+    cursor.execute(sql, (id,))
+    record = cursor.fetchall()
+    if record: return True
+    else: return False

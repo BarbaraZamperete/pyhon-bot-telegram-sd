@@ -19,26 +19,42 @@ def start(update: Update, context: CallbackContext):
         "Olá, seja bem vindo ao Bot da Báh", reply_markup=ReplyKeyboardMarkup(buttons))
     return MENSAGEM
 
+
 def senha(update: Update, context: CallbackContext):
-    buttons = [[KeyboardButton("Cadastrar Localização")], [KeyboardButton("Finalizar")]]
+    buttons = [[KeyboardButton("Cadastrar Localização")], [
+        KeyboardButton("Finalizar")]]
     # print("Salvar a senha e o user")
-    db.salvarDados(update.message.from_user.first_name,  update.message.text, update.message.from_user.id )
+    db.salvarDados(update.message.from_user.first_name,
+                    update.message.text, update.message.from_user.id)
     update.message.reply_text("O usuário %s foi cadastrado com a senha %s" % (
         update.message.from_user.first_name, update.message.text))
-    update.message.reply_text("Deseja cadastrar a localização também?", reply_markup=ReplyKeyboardMarkup(buttons))
+
+    update.message.reply_text(
+        "Deseja cadastrar a localização também?", reply_markup=ReplyKeyboardMarkup(buttons))
     return MENSAGEM
 
 
 def cadastrar(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        "Para ser cadastrado, digite uma senha", reply_markup=ReplyKeyboardRemove())
-    # dispatcher.add_handler(MessageHandler(Filters.all, senha))
-    return CADASTRAR
+    buttons = [[KeyboardButton("Cadastrar Localização")], [KeyboardButton("Finalizar")]]
+    if(db.checkUser(update.message.from_user.id)):
+        update.message.reply_text("O usuário %s já é cadastrado" % (
+            update.message.from_user.first_name))
+        update.message.reply_text(
+        "Deseja cadastrar sua localização agora?", reply_markup=ReplyKeyboardMarkup(buttons))
+        return MENSAGEM
+    else:
+        update.message.reply_text(
+            "Para ser cadastrado, digite uma senha", reply_markup=ReplyKeyboardRemove())
+        # dispatcher.add_handler(MessageHandler(Filters.all, senha))
+        return CADASTRAR
 
-def finalizar( update: Update, context: CallbackContext):
+
+def finalizar(update: Update, context: CallbackContext):
     buttons = [[KeyboardButton("Iniciar")]]
-    update.message.reply_text("Operação finalizada", reply_markup=ReplyKeyboardMarkup(buttons))
+    update.message.reply_text("Operação finalizada",
+                              reply_markup=ReplyKeyboardMarkup(buttons))
     return ConversationHandler.END
+
 
 def cancelar(update: Update, context: CallbackContext):
     buttons = [[KeyboardButton("Iniciar")]]
@@ -46,16 +62,19 @@ def cancelar(update: Update, context: CallbackContext):
         update.message.from_user.first_name), reply_markup=ReplyKeyboardMarkup(buttons))
     return ConversationHandler.END
 
+
 def localizacaoPedir(update: Update, context: CallbackContext):
-    update.message.reply_text("Mande a sua localização", reply_markup=ReplyKeyboardRemove())
+    update.message.reply_text(
+        "Mande a sua localização", reply_markup=ReplyKeyboardRemove())
     return LOCATION
+
 
 def localizacao(update: Update, context: CallbackContext):
     localicazaoUser = update.message.location
     idUser = update.message.from_user.id
     db.salvarLoca(idUser, localicazaoUser.latitude, localicazaoUser.longitude)
-    update.message.reply_text("Sua localização é longitude: %s e latitude: %s" % 
-    (localicazaoUser.longitude, localicazaoUser.latitude))
+    update.message.reply_text("Sua localização é longitude: %s e latitude: %s" %
+                              (localicazaoUser.longitude, localicazaoUser.latitude))
     return finalizar(update, context)
 
 
