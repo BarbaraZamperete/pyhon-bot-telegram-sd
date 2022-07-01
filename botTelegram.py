@@ -52,7 +52,8 @@ def localizacaoPedir(update: Update, context: CallbackContext):
 
 def localizacao(update: Update, context: CallbackContext):
     localicazaoUser = update.message.location
-    nameUser = update.message.from_user.first_name
+    idUser = update.message.from_user.id
+    db.salvarLoca(idUser, localicazaoUser.latitude, localicazaoUser.longitude)
     update.message.reply_text("Sua localização é longitude: %s e latitude: %s" % 
     (localicazaoUser.longitude, localicazaoUser.latitude))
     return finalizar(update, context)
