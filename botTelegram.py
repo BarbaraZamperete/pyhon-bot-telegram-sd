@@ -3,7 +3,7 @@ from telegram import *
 from telegram.ext import *
 from dotenv import load_dotenv
 import os
-
+import db
 
 load_dotenv()
 CHAVE = os.getenv('CHAVE_API')
@@ -21,7 +21,8 @@ def start(update: Update, context: CallbackContext):
 
 def senha(update: Update, context: CallbackContext):
     buttons = [[KeyboardButton("Cadastrar Localização")], [KeyboardButton("Finalizar")]]
-    print("Salvar a senha e o user")
+    # print("Salvar a senha e o user")
+    db.salvarDados(update.message.from_user.first_name,  update.message.text, update.message.from_user.id )
     update.message.reply_text("O usuário %s foi cadastrado com a senha %s" % (
         update.message.from_user.first_name, update.message.text))
     update.message.reply_text("Deseja cadastrar a localização também?", reply_markup=ReplyKeyboardMarkup(buttons))
